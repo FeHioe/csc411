@@ -102,6 +102,9 @@ def performance(pos_path, neg_path, set_name):
 def log_sum(words, keywords, np_count, prob):
     log_sum = 0
     
+    m = 0.21
+    k = 300
+    
     for word in words:
         if word in keywords:
             count = keywords[word]
@@ -124,14 +127,14 @@ def part3():
     neg = []
     
     for word in pos_keywords:
-        prob_word = log_sum(words, pos_keywords, pos_count, pos_prob) - (math.log(training_set[word] / (pos_count + neg_count)))
+        prob_word = log_sum([word], pos_keywords, pos_count, pos_prob) - (math.log(training_set[word] / (pos_count + neg_count)))
         heapq.heappush(pos, (prob_word, word))
 
     print "\nTop 10 Positive:"
     print [i[1] for i in heapq.nlargest(10, pos)]
 
     for word in neg_keywords:
-        prob_word = log_sum(words, neg_keywords, neg_count, neg_prob) - (math.log(training_set[word] / (pos_count + neg_count)))
+        prob_word = log_sum([word], neg_keywords, neg_count, neg_prob) - (math.log(training_set[word] / (pos_count + neg_count)))
         heapq.heappush(neg, (prob_word, word))
 
     print "\nTop 10 Negative:"
@@ -141,13 +144,11 @@ def part3():
 '''                                       Executiuon                                                     '''
 '''------------------------------------------------------------------------------------------------------'''
 if __name__ == "__main__":
+    print 'Executing Setup------------------------------------'
     neg_keywords = {}
     pos_keywords = {}
     pos_count = 0
     neg_count = 0
-    
-    m = 0.21
-    k = 300
     
     for filepath in iglob(os.path.join('txt_sentoken/pos/train', '*.txt')):
         with open(filepath) as file:
@@ -177,8 +178,12 @@ if __name__ == "__main__":
     neg_prob = float(neg_count) / float(pos_count + neg_count)
     
     training_set = {i: pos_keywords.get(i, 0) + neg_keywords.get(i, 0) for i in set(pos_keywords) | set(neg_keywords)}
-        
+    
+    print 'Executing Part 1------------------------------------'
+    part1()
+    print 'Executing Part 2------------------------------------'
     part2()
+    print 'Executing Part 3------------------------------------'
     part3()
     
 
